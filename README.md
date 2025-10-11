@@ -185,3 +185,7 @@ This work is based on various dungeon generation techniques and algorithms:
 ## Support
 
 For issues, questions, or contributions, please visit the [GitHub repository](https://github.com/SiENcE/astray).
+
+## Author
+
+Florian Fischer
