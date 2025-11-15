@@ -19,7 +19,7 @@ freely, subject to the following restrictions:
 
    3. This notice may not be removed or altered from any source
    distribution.
-]]--
+]] --
 
 local PATH = "astray/astray."
 
@@ -28,9 +28,9 @@ local class = require(PATH .. 'MiddleClass')
 -- Class
 local Point = class("Point")
 
-function Point:initialize( x, y )
-	self.X = x
-	self.Y = y
+function Point:initialize(x, y)
+    self.X = x
+    self.Y = y
 end
 
 return Point

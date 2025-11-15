@@ -19,7 +19,7 @@ freely, subject to the following restrictions:
 
    3. This notice may not be removed or altered from any source
    distribution.
-]]--
+]] --
 
 local PATH = "astray/astray."
 
@@ -31,148 +31,147 @@ local Map = require(PATH .. 'map')
 -- Class
 local Dungeon = class("Dungeon", Map)
 
-function Dungeon:initialize( width, height )
-	Map.initialize(self, width, height) -- invoking the superclass' initializer
+function Dungeon:initialize(width, height)
+    Map.initialize(self, width, height) -- invoking the superclass' initializer
 
-	self.visitedCells = {}
-	self.rooms = {}
+    self.visitedCells = {}
+    self.rooms = {}
 end
 
-function Dungeon:AddRoom( room )
-	table.insert(self.rooms, room )
+function Dungeon:AddRoom(room)
+    table.insert(self.rooms, room)
 end
 
 function Dungeon:FlagAllCellsAsUnvisited()
-	for key,location in pairs( self:getCellLocations() ) do
-		self:getCell(location):setVisited(false)
-	end
+    for key, location in pairs(self:getCellLocations()) do
+        self:getCell(location):setVisited(false)
+    end
 end
 
 -- return point
 function Dungeon:PickRandomCellAndFlagItAsVisited()
-	local randomLocation = Point:new(math.random(0,self:getWidth() - 1), math.random(0,self:getHeight() - 1))
-	self:FlagCellAsVisited(randomLocation)
-	return randomLocation
+    local randomLocation = Point:new(math.random(0, self:getWidth() - 1), math.random(0, self:getHeight() - 1))
+    self:FlagCellAsVisited(randomLocation)
+    return randomLocation
 end
 
 -- return boolean
-function Dungeon:AdjacentCellInDirectionIsVisited( location, direction )
-	local target = self:GetTargetLocation(location, direction)
-	
-	if target == nil then
-		return false
-	end
-	
-	if direction == DirectionType.North then
-		return self:getCell(target):getVisited()
-	elseif direction == DirectionType.West then
-		return self:getCell(target):getVisited()
-	elseif direction == DirectionType.South then
-		return self:getCell(target):getVisited()
-	elseif direction == DirectionType.East then
-		return self:getCell(target):getVisited()
-	else
-		print('ERROR: InvalidOperationException (Dungeon:AdjacentCellInDirectionIsVisited)')
-		return nil
-	end
+function Dungeon:AdjacentCellInDirectionIsVisited(location, direction)
+    local target = self:GetTargetLocation(location, direction)
+
+    if target == nil then
+        return false
+    end
+
+    if direction == DirectionType.North then
+        return self:getCell(target):getVisited()
+    elseif direction == DirectionType.West then
+        return self:getCell(target):getVisited()
+    elseif direction == DirectionType.South then
+        return self:getCell(target):getVisited()
+    elseif direction == DirectionType.East then
+        return self:getCell(target):getVisited()
+    else
+        print('ERROR: InvalidOperationException (Dungeon:AdjacentCellInDirectionIsVisited)')
+        return nil
+    end
 end
 
 -- return boolean
-function Dungeon:AdjacentCellInDirectionIsCorridor( location, direction )
-	local target = self:GetTargetLocation(location, direction)
+function Dungeon:AdjacentCellInDirectionIsCorridor(location, direction)
+    local target = self:GetTargetLocation(location, direction)
 
-	if target == nil then
-		return false
-	end
+    if target == nil then
+        return false
+    end
 
-	if direction == DirectionType.North then
-		return self:getCell(target):getIsCorridor()
-	elseif direction == DirectionType.West then
-		return self:getCell(target):getIsCorridor()
-	elseif direction == DirectionType.South then
-		return self:getCell(target):getIsCorridor()
-	elseif direction == DirectionType.East then
-		return self:getCell(target):getIsCorridor()
-	else
-		print('ERROR: InvalidOperationException (Dungeon:AdjacentCellInDirectionIsCorridor)')
-		return false
-	end
+    if direction == DirectionType.North then
+        return self:getCell(target):getIsCorridor()
+    elseif direction == DirectionType.West then
+        return self:getCell(target):getIsCorridor()
+    elseif direction == DirectionType.South then
+        return self:getCell(target):getIsCorridor()
+    elseif direction == DirectionType.East then
+        return self:getCell(target):getIsCorridor()
+    else
+        print('ERROR: InvalidOperationException (Dungeon:AdjacentCellInDirectionIsCorridor)')
+        return false
+    end
 end
 
-function Dungeon:FlagCellAsVisited( location )
-	if not Util:rectbound(location, self:getBounds() ) then
-		print('ERROR: Location is outside of Dungeon bounds')
-	end
+function Dungeon:FlagCellAsVisited(location)
+    if not Util:rectbound(location, self:getBounds()) then
+        print('ERROR: Location is outside of Dungeon bounds')
+    end
 
-	if self:getCell(location):getVisited() then
-		print('ERROR: Location is already visited')
-	end
+    if self:getCell(location):getVisited() then
+        print('ERROR: Location is already visited')
+    end
 
-	self:getCell(location):setVisited(true)
-	table.insert( self.visitedCells, location )
-end
-
--- return point
-function Dungeon:GetRandomVisitedCell( location )
-	if (#self.visitedCells == 0) then
-		print("ERROR: There are no visited cells to return.")
-		return nil
-	end
-
-	local index = math.random(#self.visitedCells-1)
-
-	-- Loop while the current cell is the visited cell
-	while (self.visitedCells[index].X == location.X and self.visitedCells[index].Y == location.Y) do
-		index = math.random(#self.visitedCells - 1)
-	end
-	
-	return self.visitedCells[index]
+    self:getCell(location):setVisited(true)
+    table.insert(self.visitedCells, location)
 end
 
 -- return point
-function Dungeon:CreateCorridor( location, direction )
-	local targetLocation = self:CreateSide(location, direction, SideType.Empty)
-	
-	self:getCell(location):setIsCorridor(true)	-- Set current location to corridor
-	self:getCell(targetLocation):setIsCorridor(true) --Set target location to corridor
-	
-	return targetLocation
-end
+function Dungeon:GetRandomVisitedCell(location)
+    if (#self.visitedCells == 0) then
+        print("ERROR: There are no visited cells to return.")
+        return nil
+    end
 
+    local index = math.random(#self.visitedCells - 1)
 
--- return point
-function Dungeon:CreateWall( location, direction )
-	return self:CreateSide(location, direction, SideType.Wall)
-end
+    -- Loop while the current cell is the visited cell
+    while (self.visitedCells[index].X == location.X and self.visitedCells[index].Y == location.Y) do
+        index = math.random(#self.visitedCells - 1)
+    end
 
--- return point
-function Dungeon:CreateDoor( location, direction )
-	return self:CreateSide(location, direction, SideType.Door)
+    return self.visitedCells[index]
 end
 
 -- return point
-function Dungeon:CreateSide( location, direction, sideType )
-	local target = self:GetTargetLocation(location, direction)
+function Dungeon:CreateCorridor(location, direction)
+    local targetLocation = self:CreateSide(location, direction, SideType.Empty)
 
-	if (target == nil) then
-		print('ERROR: ArgumentException("There is no adjacent cell in the given direction", "location")')
-	end
+    self:getCell(location):setIsCorridor(true)    -- Set current location to corridor
+    self:getCell(targetLocation):setIsCorridor(true) --Set target location to corridor
 
-	if direction == DirectionType.North then
-		self:getCell(location):setNorthSide( sideType )
-		self:getCell(target):setSouthSide( sideType )
-	elseif direction == DirectionType.South then
-		self:getCell(location):setSouthSide( sideType )
-		self:getCell(target):setNorthSide( sideType )
-	elseif direction == DirectionType.West then
-		self:getCell(location):setWestSide( sideType )
-		self:getCell(target):setEastSide( sideType )
-	elseif direction == DirectionType.East then
-		self:getCell(location):setEastSide( sideType )
-		self:getCell(target):setWestSide( sideType )
-	end
+    return targetLocation
+end
 
-	return target
+-- return point
+function Dungeon:CreateWall(location, direction)
+    return self:CreateSide(location, direction, SideType.Wall)
+end
+
+-- return point
+function Dungeon:CreateDoor(location, direction)
+    return self:CreateSide(location, direction, SideType.Door)
+end
+
+-- return point
+function Dungeon:CreateSide(location, direction, sideType)
+    local target = self:GetTargetLocation(location, direction)
+
+    if (target == nil) then
+        print('ERROR: ArgumentException("There is no adjacent cell in the given direction", "location")')
+    end
+
+    if direction == DirectionType.North then
+        self:getCell(location):setNorthSide(sideType)
+        self:getCell(target):setSouthSide(sideType)
+    elseif direction == DirectionType.South then
+        self:getCell(location):setSouthSide(sideType)
+        self:getCell(target):setNorthSide(sideType)
+    elseif direction == DirectionType.West then
+        self:getCell(location):setWestSide(sideType)
+        self:getCell(target):setEastSide(sideType)
+    elseif direction == DirectionType.East then
+        self:getCell(location):setEastSide(sideType)
+        self:getCell(target):setWestSide(sideType)
+    end
+
+    return target
 end
 
 ------------------------------------------------------
@@ -181,30 +180,30 @@ end
 
 -- return boolean
 function Dungeon:AllCellsAreVisited()
-	return #self.visitedCells == ( self:getWidth() * self:getHeight() )
+    return #self.visitedCells == (self:getWidth() * self:getHeight())
 end
 
 -- IEnumerable<Point>
 function Dungeon:DeadEndCellLocations()
-	local deadEndpointList = {}
-	for key,point in pairs( self:getCellLocations() ) do
-		if self:getCell(point):getIsDeadEnd() then
-			table.insert(deadEndpointList, point)
-		end
-	end
+    local deadEndpointList = {}
+    for key, point in pairs(self:getCellLocations()) do
+        if self:getCell(point):getIsDeadEnd() then
+            table.insert(deadEndpointList, point)
+        end
+    end
 
-	return deadEndpointList
+    return deadEndpointList
 end
 
 function Dungeon:CorridorCellLocations()
-	local corridorPointList = {}
-	for key,point in pairs( self:getCellLocations() ) do
-		if self:getCell(point):getIsCorridor() then
-			table.insert(corridorPointList, point)
-		end
-	end
+    local corridorPointList = {}
+    for key, point in pairs(self:getCellLocations()) do
+        if self:getCell(point):getIsCorridor() then
+            table.insert(corridorPointList, point)
+        end
+    end
 
-	return corridorPointList
+    return corridorPointList
 end
 
 return Dungeon

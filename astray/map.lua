@@ -19,7 +19,7 @@ freely, subject to the following restrictions:
 
    3. This notice may not be removed or altered from any source
    distribution.
-]]--
+]] --
 
 local PATH = "astray/astray."
 
@@ -31,59 +31,59 @@ local Cell = require(PATH .. 'cell')
 -- Class
 local Map = class("Map")
 
-function Map:initialize( width, height )
-	self.cells = {}
-	self.bounds = { X=0, Y=0, Width=width, Height=height }
-	self.cellLocations = {} -- Add cache
+function Map:initialize(width, height)
+    self.cells = {}
+    self.bounds = { X = 0, Y = 0, Width = width, Height = height }
+    self.cellLocations = {} -- Add cache
 
-	-- Initialize cells and cache locations
-	for x = 0, self.bounds.Width-1 do
-		self.cells[x] = {}
-		for y = 0, self.bounds.Height-1 do
-			self.cells[x][y] = Cell:new()
-			table.insert(self.cellLocations, Point:new(x,y))
-		end
-	end
+    -- Initialize cells and cache locations
+    for x = 0, self.bounds.Width - 1 do
+        self.cells[x] = {}
+        for y = 0, self.bounds.Height - 1 do
+            self.cells[x][y] = Cell:new()
+            table.insert(self.cellLocations, Point:new(x, y))
+        end
+    end
 end
 
-function Map:HasAdjacentCellInDirection( location, direction)
-	-- Check that the location falls within the bounds of the map
-	if not Util:rectbound(location, self.bounds) then
-		print('ERROR: Map:HasAdjacentCellInDirection: not rectbound!!')
-		return false
-	end
+function Map:HasAdjacentCellInDirection(location, direction)
+    -- Check that the location falls within the bounds of the map
+    if not Util:rectbound(location, self.bounds) then
+        print('ERROR: Map:HasAdjacentCellInDirection: not rectbound!!')
+        return false
+    end
 
-	-- Check if there is an adjacent cell in the direction
-	if direction == DirectionType.North then
-		return location.Y > 0
-	elseif direction == DirectionType.South then
-		return location.Y < (self:getHeight() - 1)
-	elseif direction == DirectionType.West then
-		return location.X > 0
-	elseif direction == DirectionType.East then
-		return location.X < (self:getWidth() - 1)
-	else
-		print('ERROR: Map:HasAdjacentCellInDirection')
-		return false
-	end
+    -- Check if there is an adjacent cell in the direction
+    if direction == DirectionType.North then
+        return location.Y > 0
+    elseif direction == DirectionType.South then
+        return location.Y < (self:getHeight() - 1)
+    elseif direction == DirectionType.West then
+        return location.X > 0
+    elseif direction == DirectionType.East then
+        return location.X < (self:getWidth() - 1)
+    else
+        print('ERROR: Map:HasAdjacentCellInDirection')
+        return false
+    end
 end
 
 -- return point
-function Map:GetTargetLocation( location, direction)
-	if not self:HasAdjacentCellInDirection(location, direction) then return nil end
+function Map:GetTargetLocation(location, direction)
+    if not self:HasAdjacentCellInDirection(location, direction) then return nil end
 
-	if direction == DirectionType.North then
-		return Point:new(location.X, location.Y - 1)
-	elseif direction == DirectionType.West then
-		return Point:new(location.X - 1, location.Y)
-	elseif direction == DirectionType.South then
-		return Point:new(location.X, location.Y + 1)
-	elseif direction == DirectionType.East then
-		return Point:new(location.X + 1, location.Y)
-	else
-		print('ERROR: InvalidOperationException (Map:GetTargetLocation)')
-		return nil
-	end
+    if direction == DirectionType.North then
+        return Point:new(location.X, location.Y - 1)
+    elseif direction == DirectionType.West then
+        return Point:new(location.X - 1, location.Y)
+    elseif direction == DirectionType.South then
+        return Point:new(location.X, location.Y + 1)
+    elseif direction == DirectionType.East then
+        return Point:new(location.X + 1, location.Y)
+    else
+        print('ERROR: InvalidOperationException (Map:GetTargetLocation)')
+        return nil
+    end
 end
 
 ------------------------------------------------------
@@ -91,25 +91,27 @@ end
 ------------------------------------------------------
 
 function Map:getBounds()
-	return self.bounds
+    return self.bounds
 end
 
-function Map:getCell( point )
-	return self.cells[point.X][point.Y]
+function Map:getCell(point)
+    return self.cells[point.X][point.Y]
 end
-function Map:setCell( point, value )
-	self.cells[point.X][point.Y] = value
+
+function Map:setCell(point, value)
+    self.cells[point.X][point.Y] = value
 end
 
 function Map:getWidth()
-	return self.bounds.Width
+    return self.bounds.Width
 end
+
 function Map:getHeight()
-	return self.bounds.Height
+    return self.bounds.Height
 end
 
 function Map:getCellLocations()
-	return self.cellLocations
+    return self.cellLocations
 end
 
 return Map
