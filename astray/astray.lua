@@ -26,7 +26,7 @@ DirectionType = { North = 0, South = 1, East = 2, West = 3 }
 SideType = { Empty=1, Wall=2, Door=3 }
 MaxValue = 65535
 
-local PATH = (...):match("(.-)[^%.]+$")
+local PATH = "astray/astray."
 
 local class = require(PATH .. 'MiddleClass')
 local Point = require(PATH .. 'point')
@@ -103,50 +103,50 @@ function Astray:CreateDenseMaze( dungeon )
 end
 
 function Astray:SparsifyMaze(dungeon)
-    -- Calculate the target number of cells to remove
-    local noOfDeadEndCellsToRemove = math.ceil((self.sparsenessModifier / 100) * (dungeon:getWidth() * dungeon:getHeight()))
-    
-    -- Initialize counters
-    local cellsRemoved = 0
-    local maxIterations = dungeon:getWidth() * dungeon:getHeight() -- Maximum possible iterations
-    local iterations = 0
-    
-    while cellsRemoved < noOfDeadEndCellsToRemove do
-        -- Get current dead end cells
-        local deadEndCellList = dungeon:DeadEndCellLocations()
-        
-        -- Break if no more dead ends or max iterations reached
-        if #deadEndCellList < 2 or iterations >= maxIterations then
-            break
-        end
-        
-        -- Process each dead end
-        for _, point in pairs(deadEndCellList) do
-            local cell = dungeon:getCell(point)
-            local direction = cell:CalculateDeadEndCorridorDirection()
-            
-            -- Remove the dead end
-            dungeon:CreateWall(point, direction)
-            dungeon:getCell(point):setIsCorridor(false)
-            
-            -- Update counter
-            cellsRemoved = cellsRemoved + 1
-            
-            -- Check if we've reached our target
-            if cellsRemoved >= noOfDeadEndCellsToRemove then
-                break
-            end
-        end
-        
-        -- Increment iteration counter
-        iterations = iterations + 1
-    end
-    
-    -- Log completion statistics if needed
-    if iterations >= maxIterations then
-        print(string.format("WARNING: SparsifyMaze reached maximum iterations. Removed %d of %d planned cells.", 
-                          cellsRemoved, noOfDeadEndCellsToRemove))
-    end
+	-- Calculate the target number of cells to remove
+	local noOfDeadEndCellsToRemove = math.ceil((self.sparsenessModifier / 100) * (dungeon:getWidth() * dungeon:getHeight()))
+	
+	-- Initialize counters
+	local cellsRemoved = 0
+	local maxIterations = dungeon:getWidth() * dungeon:getHeight() -- Maximum possible iterations
+	local iterations = 0
+	
+	while cellsRemoved < noOfDeadEndCellsToRemove do
+		-- Get current dead end cells
+		local deadEndCellList = dungeon:DeadEndCellLocations()
+		
+		-- Break if no more dead ends or max iterations reached
+		if #deadEndCellList < 2 or iterations >= maxIterations then
+			break
+		end
+		
+		-- Process each dead end
+		for _, point in pairs(deadEndCellList) do
+			local cell = dungeon:getCell(point)
+			local direction = cell:CalculateDeadEndCorridorDirection()
+			
+			-- Remove the dead end
+			dungeon:CreateWall(point, direction)
+			dungeon:getCell(point):setIsCorridor(false)
+			
+			-- Update counter
+			cellsRemoved = cellsRemoved + 1
+			
+			-- Check if we've reached our target
+			if cellsRemoved >= noOfDeadEndCellsToRemove then
+				break
+			end
+		end
+		
+		-- Increment iteration counter
+		iterations = iterations + 1
+	end
+	
+	-- Log completion statistics if needed
+	if iterations >= maxIterations then
+		print(string.format("WARNING: SparsifyMaze reached maximum iterations. Removed %d of %d planned cells.", 
+						  cellsRemoved, noOfDeadEndCellsToRemove))
+	end
 end
 
 function Astray:RemoveDeadEnds( dungeon )
@@ -182,7 +182,7 @@ function Astray:CellToTiles( dungeon, tiles )
 	local tile = tiles
 	if not tile then
 		tile = {}
-		tile.Wall = '²'
+		tile.Wall = '#'
 		tile.Empty = ' '
 		tile.DoorN = '|'
 		tile.DoorS = '|'
@@ -191,9 +191,9 @@ function Astray:CellToTiles( dungeon, tiles )
 	end
 	
 	local expanded = {}
-    for x = 0, dungeon:getWidth()*2 do
-        expanded[x] = {}
-        for y = 0, dungeon:getHeight()*2  do
+	for x = 0, dungeon:getWidth()*2 do
+		expanded[x] = {}
+		for y = 0, dungeon:getHeight()*2  do
 			expanded[x][y] = tile.Wall
 		end
 	end

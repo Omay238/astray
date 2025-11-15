@@ -21,7 +21,7 @@ freely, subject to the following restrictions:
    distribution.
 ]]--
 
-local PATH = (...):match("(.-)[^%.]+$")
+local PATH = "astray/astray."
 
 local class = require(PATH .. 'MiddleClass')
 local Util = require(PATH .. 'util')
@@ -32,18 +32,18 @@ local Cell = require(PATH .. 'cell')
 local Map = class("Map")
 
 function Map:initialize( width, height )
-    self.cells = {}
-    self.bounds = { X=0, Y=0, Width=width, Height=height }
-    self.cellLocations = {} -- Add cache
+	self.cells = {}
+	self.bounds = { X=0, Y=0, Width=width, Height=height }
+	self.cellLocations = {} -- Add cache
 
-    -- Initialize cells and cache locations
-    for x = 0, self.bounds.Width-1 do
-        self.cells[x] = {}
-        for y = 0, self.bounds.Height-1 do
-            self.cells[x][y] = Cell:new()
-            table.insert(self.cellLocations, Point:new(x,y))
-        end
-    end
+	-- Initialize cells and cache locations
+	for x = 0, self.bounds.Width-1 do
+		self.cells[x] = {}
+		for y = 0, self.bounds.Height-1 do
+			self.cells[x][y] = Cell:new()
+			table.insert(self.cellLocations, Point:new(x,y))
+		end
+	end
 end
 
 function Map:HasAdjacentCellInDirection( location, direction)
@@ -109,7 +109,7 @@ function Map:getHeight()
 end
 
 function Map:getCellLocations()
-    return self.cellLocations
+	return self.cellLocations
 end
 
 return Map

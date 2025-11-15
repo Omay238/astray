@@ -21,7 +21,7 @@ freely, subject to the following restrictions:
    distribution.
 ]]--
 
-local PATH = (...):match("(.-)[^%.]+$")
+local PATH = "astray/astray."
 
 local class = require(PATH .. 'MiddleClass')
 local Cell = require(PATH .. 'cell')

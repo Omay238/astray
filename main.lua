@@ -10,8 +10,8 @@ function drawdungeon(tiles, startx, starty, width, height)
 	-- we have to add +1 for the 0 rows
 	print("Map size=", #tiles+1-startx, #tiles[1]+1-starty )
 
-    for y = startx, height do
-        local line = ''
+	for y = startx, height do
+		local line = ''
 		for x = starty, width do
 			line = line .. tiles[y][x]
 		end
@@ -22,7 +22,7 @@ end
 
 function updatewalls(tiles, width, height)
 	local block = false
-    for y = 0, height do
+	for y = 0, height do
 		for x = 0, width do
 			if tiles[x][y] == '#' then
 				if block then

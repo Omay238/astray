@@ -21,7 +21,7 @@ freely, subject to the following restrictions:
    distribution.
 ]]--
 
-local PATH = (...):match("(.-)[^%.]+$")
+local PATH = "astray/astray."
 
 local class = require(PATH .. 'MiddleClass')
 
@@ -60,9 +60,9 @@ end
 
 function Util:tablecontains(table, element)
   for _, value in pairs(table) do
-    if value == element then
-      return true
-    end
+	if value == element then
+	  return true
+	end
   end
   return false
 end
