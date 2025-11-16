@@ -4,7 +4,7 @@ Copyright (c) <''2024''> <''Florian Fischer''>
 
 local astray = require('astray')
 
-local symbols = { Wall = '#', Empty = ' ', DoorN = '|', DoorS = '|', DoorE = '-', DoorW = '-' }
+local symbols = { Wall = '#', Empty = ' ', DoorN = '|', DoorS = '|', DoorE = '-', DoorW = '-', Treasure = '$' }
 
 function drawdungeon(tiles, startx, starty, width, height)
     -- we have to add +1 for the 0 rows

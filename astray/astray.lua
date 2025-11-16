@@ -218,11 +218,17 @@ function Astray:CellToTiles(dungeon, tiles)
         -- Fill the room in tile space with an empty value, except on treasures
         for i = minPoint.X, maxPoint.X - 1 do
             for j = minPoint.Y, maxPoint.Y - 1 do
-                if room:getCell(Point:new((i - minPoint.X) // 2, (j - minPoint.Y) // 2)):getIsTreasure() then
-                    expanded[i][j] = tile.Treasure
-                else
-                    expanded[i][j] = tile.Empty
-                end
+                expanded[i][j] = tile.Empty
+            end
+        end
+
+        for key, location in pairs(room:getCellLocations()) do
+            if room:getCell(location):getIsTreasure() then
+                local dungeonX = room:getBounds().X + location.X
+                local dungeonY = room:getBounds().Y + location.Y
+                local tx = dungeonX * 2 + 1
+                local ty = dungeonY * 2 + 1
+                expanded[tx][ty] = tile.Treasure
             end
         end
     end
