@@ -1,4 +1,4 @@
-local BASE = "astray/astray."
+local BASE = (...) .. '.'
 
 return {
     Astray = require(BASE .. 'astray'),
