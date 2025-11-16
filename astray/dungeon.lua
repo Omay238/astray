@@ -133,7 +133,7 @@ end
 function Dungeon:CreateCorridor(location, direction)
     local targetLocation = self:CreateSide(location, direction, SideType.Empty)
 
-    self:getCell(location):setIsCorridor(true)    -- Set current location to corridor
+    self:getCell(location):setIsCorridor(true)       -- Set current location to corridor
     self:getCell(targetLocation):setIsCorridor(true) --Set target location to corridor
 
     return targetLocation

@@ -31,12 +31,14 @@ local Room = require(PATH .. 'room')
 -- Class
 local RoomGenerator = class("RoomGenerator")
 
-function RoomGenerator:initialize(noOfRoomsToPlace, minRoomWidth, maxRoomWidth, minRoomHeight, maxRoomHeight)
+function RoomGenerator:initialize(noOfRoomsToPlace, minRoomWidth, maxRoomWidth, minRoomHeight, maxRoomHeight,
+                                  treasureChance)
     self.noOfRoomsToPlace = noOfRoomsToPlace or 10
     self.minRoomWidth = minRoomWidth or 1
     self.maxRoomWidth = maxRoomWidth or 6
     self.minRoomHeight = minRoomHeight or 1
     self.maxRoomHeight = maxRoomHeight or 6
+    self.treasureChance = treasureChance or 20
 end
 
 function RoomGenerator:CreateRoom()
@@ -83,14 +85,22 @@ function RoomGenerator:CalculateRoomPlacementScore(location, room, dungeon)
             local dungeonLocation = Point:new(location.X + roomLocation.X, location.Y + roomLocation.Y);
 
             -- Add 1 point for each adjacent corridor to the cell
-            if dungeon:AdjacentCellInDirectionIsCorridor(dungeonLocation, DirectionType.North) then roomPlacementScore =
-                roomPlacementScore + 1 end
-            if dungeon:AdjacentCellInDirectionIsCorridor(dungeonLocation, DirectionType.South) then roomPlacementScore =
-                roomPlacementScore + 1 end
-            if dungeon:AdjacentCellInDirectionIsCorridor(dungeonLocation, DirectionType.West) then roomPlacementScore =
-                roomPlacementScore + 1 end
-            if dungeon:AdjacentCellInDirectionIsCorridor(dungeonLocation, DirectionType.East) then roomPlacementScore =
-                roomPlacementScore + 1 end
+            if dungeon:AdjacentCellInDirectionIsCorridor(dungeonLocation, DirectionType.North) then
+                roomPlacementScore =
+                    roomPlacementScore + 1
+            end
+            if dungeon:AdjacentCellInDirectionIsCorridor(dungeonLocation, DirectionType.South) then
+                roomPlacementScore =
+                    roomPlacementScore + 1
+            end
+            if dungeon:AdjacentCellInDirectionIsCorridor(dungeonLocation, DirectionType.West) then
+                roomPlacementScore =
+                    roomPlacementScore + 1
+            end
+            if dungeon:AdjacentCellInDirectionIsCorridor(dungeonLocation, DirectionType.East) then
+                roomPlacementScore =
+                    roomPlacementScore + 1
+            end
 
             -- Add 3 points if the cell overlaps an existing corridor
             if (dungeon:getCell(dungeonLocation):getIsCorridor()) then roomPlacementScore = roomPlacementScore + 3 end
@@ -188,6 +198,16 @@ function RoomGenerator:PlaceDoors(dungeon)
                 dungeon:CreateDoor(dungeonLocation, DirectionType.South)
                 hasSouthDoor = true
             end
+        end
+    end
+end
+
+function RoomGenerator:PlaceTreasures(dungeon)
+    for key, room in pairs(dungeon.rooms) do
+        if math.random(1, 99) < self.treasureChance then
+            local bounds = room:getBounds()
+            room:getCell(Point:new(math.random(0, bounds.Width - 1),
+                math.random(0, bounds.Height - 1))):setIsTreasure(true)
         end
     end
 end

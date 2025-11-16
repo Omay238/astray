@@ -35,11 +35,14 @@ function Cell:initialize()
     self.westSide = SideType.Wall
     self.visited = false
     self.isCorridor = false
+    self.isTreasure = false
 end
 
 function Cell:CalculateDeadEndCorridorDirection()
-    if (not self:getIsDeadEnd()) then print(
-        'ERROR: InvalidOperationException (Cell:CalculateDeadEndCorridorDirection): not getIsDeadEnd()') end
+    if (not self:getIsDeadEnd()) then
+        print(
+            'ERROR: InvalidOperationException (Cell:CalculateDeadEndCorridorDirection): not getIsDeadEnd()')
+    end
 
     if (self.northSide == SideType.Empty) then return DirectionType.North end
     if (self.southSide == SideType.Empty) then return DirectionType.South end
@@ -102,6 +105,14 @@ end
 
 function Cell:setIsCorridor(isCorridor)
     self.isCorridor = isCorridor
+end
+
+function Cell:getIsTreasure()
+    return self.isTreasure
+end
+
+function Cell:setIsTreasure(isTreasure)
+    self.isTreasure = isTreasure
 end
 
 function Cell:getWallCount()

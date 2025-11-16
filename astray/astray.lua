@@ -48,7 +48,7 @@ function Astray:initialize(width, height, changeDirectionModifier, sparsenessMod
     self.changeDirectionModifier = changeDirectionModifier or 30
     self.sparsenessModifier = sparsenessModifier or 70
     self.deadEndRemovalModifier = deadEndRemovalModifier or 50
-    self.roomGenerator = roomGenerator or RoomGenerator:new(10, 1, 5, 1, 5)
+    self.roomGenerator = roomGenerator or RoomGenerator:new(10, 1, 5, 1, 5, 20)
 end
 
 function Astray:Generate()
@@ -61,6 +61,7 @@ function Astray:Generate()
 
     self.roomGenerator:PlaceRooms(dungeon)
     self.roomGenerator:PlaceDoors(dungeon)
+    self.roomGenerator:PlaceTreasures(dungeon)
 
     return dungeon
 end
@@ -80,6 +81,10 @@ function Astray:GeneratePlaceDoors(dungeon)
     self.roomGenerator:PlaceDoors(dungeon)
 end
 
+function Astray:GeneratePlaceTreasures(dungeon)
+    self.roomGenerator:PlaceTreasures(dungeon)
+end
+
 function Astray:CreateDenseMaze(dungeon)
     local currentLocation = dungeon:PickRandomCellAndFlagItAsVisited()
     local previousDirection = DirectionType.North
@@ -92,9 +97,9 @@ function Astray:CreateDenseMaze(dungeon)
             if directionPicker:HasNextDirection() then
                 direction = directionPicker:GetNextDirection()
             else
-                currentLocation = dungeon:GetRandomVisitedCell(currentLocation)            -- Get a new previously visited location
+                currentLocation = dungeon:GetRandomVisitedCell(currentLocation)                        -- Get a new previously visited location
                 directionPicker = DirectionPicker:new(previousDirection, self.changeDirectionModifier) -- Reset the direction picker
-                direction = directionPicker:GetNextDirection()                             -- Get a new direction
+                direction = directionPicker:GetNextDirection()                                         -- Get a new direction
             end
         end
 
@@ -107,7 +112,7 @@ end
 function Astray:SparsifyMaze(dungeon)
     -- Calculate the target number of cells to remove
     local noOfDeadEndCellsToRemove = math.ceil((self.sparsenessModifier / 100) *
-    (dungeon:getWidth() * dungeon:getHeight()))
+        (dungeon:getWidth() * dungeon:getHeight()))
 
     -- Initialize counters
     local cellsRemoved = 0
@@ -160,7 +165,7 @@ function Astray:RemoveDeadEnds(dungeon)
 
             repeat
                 local directionPicker = DirectionPicker:new(
-                dungeon:getCell(currentLocation):CalculateDeadEndCorridorDirection(), 100)
+                    dungeon:getCell(currentLocation):CalculateDeadEndCorridorDirection(), 100)
                 local direction = directionPicker:GetNextDirection()
 
                 while (not dungeon:HasAdjacentCellInDirection(currentLocation, direction)) do
@@ -191,6 +196,7 @@ function Astray:CellToTiles(dungeon, tiles)
         tile.DoorS = '|'
         tile.DoorE = '-'
         tile.DoorW = '-'
+        tile.Treasure = '$'
     end
 
     local expanded = {}
@@ -209,10 +215,14 @@ function Astray:CellToTiles(dungeon, tiles)
         maxPoint = Point:new((room:getBounds().X + room:getBounds().Width) * 2,
             (room:getBounds().Y + room:getBounds().Height) * 2)
 
-        -- Fill the room in tile space with an empty value
+        -- Fill the room in tile space with an empty value, except on treasures
         for i = minPoint.X, maxPoint.X - 1 do
             for j = minPoint.Y, maxPoint.Y - 1 do
-                expanded[i][j] = tile.Empty
+                if room:getCell(Point:new((i - minPoint.X) // 2, (j - minPoint.Y) // 2)):getIsTreasure() then
+                    expanded[i][j] = tile.Treasure
+                else
+                    expanded[i][j] = tile.Empty
+                end
             end
         end
     end
