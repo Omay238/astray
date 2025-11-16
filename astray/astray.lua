@@ -186,6 +186,65 @@ function Astray:ShouldRemoveDeadend()
     return math.random(1, 99) < self.deadEndRemovalModifier
 end
 
+function Astray:FindFurthest(dungeon, start)
+    local function keyFor(point)
+        return tostring(point.X) .. ',' .. tostring(point.Y)
+    end
+
+    local visited = {}
+    visited[keyFor(start)] = true
+    local queue = {
+        { start, 0 }
+    }
+    local furthestPoint = start
+    local furthestDistance = 0
+
+    while #queue > 0 do
+        local queueElement = table.remove(queue, 1)
+        local currentPoint, currentDistance = queueElement[1], queueElement[2]
+
+        local cell = dungeon:getCell(queueElement[1])
+
+        if cell ~= nil then
+            if currentDistance > furthestDistance and not dungeon:getCell(currentPoint):getIsCorridor() then
+                furthestPoint = currentPoint
+                furthestDistance = currentDistance
+            end
+
+            if cell:getNorthSide() ~= SideType.Wall then
+                local northPosition = Point:new(currentPoint.X, currentPoint.Y - 1)
+                if not visited[keyFor(northPosition)] then
+                    table.insert(queue, { northPosition, currentDistance + 1 })
+                    visited[keyFor(northPosition)] = true
+                end
+            end
+            if cell:getEastSide() ~= SideType.Wall then
+                local eastPosition = Point:new(currentPoint.X + 1, currentPoint.Y)
+                if not visited[keyFor(eastPosition)] then
+                    table.insert(queue, { eastPosition, currentDistance + 1 })
+                    visited[keyFor(eastPosition)] = true
+                end
+            end
+            if cell:getSouthSide() ~= SideType.Wall then
+                local southPosition = Point:new(currentPoint.X, currentPoint.Y + 1)
+                if not visited[keyFor(southPosition)] then
+                    table.insert(queue, { southPosition, currentDistance + 1 })
+                    visited[keyFor(southPosition)] = true
+                end
+            end
+            if cell:getWestSide() ~= SideType.Wall then
+                local westPosition = Point:new(currentPoint.X - 1, currentPoint.Y)
+                if not visited[keyFor(westPosition)] then
+                    table.insert(queue, { westPosition, currentDistance + 1 })
+                    visited[keyFor(westPosition)] = true
+                end
+            end
+        end
+    end
+
+    return furthestPoint
+end
+
 function Astray:CellToTiles(dungeon, tiles)
     local tile = tiles
     if not tile then
@@ -206,6 +265,8 @@ function Astray:CellToTiles(dungeon, tiles)
             expanded[x][y] = tile.Wall
         end
     end
+
+    local furthest = Point:new(0, 0)
 
     local minPoint = nil
     local maxPoint = nil
@@ -229,6 +290,8 @@ function Astray:CellToTiles(dungeon, tiles)
                 local tx = dungeonX * 2 + 1
                 local ty = dungeonY * 2 + 1
                 expanded[tx][ty] = tile.Treasure
+            else
+                furthest = Point:new(room:getBounds().X + location.X, room:getBounds().Y + location.Y)
             end
         end
     end
@@ -250,6 +313,13 @@ function Astray:CellToTiles(dungeon, tiles)
         if dungeon:getCell(location):getWestSide() == SideType.Empty then expanded[target.X - 1][target.Y] = tile.Empty end
         if dungeon:getCell(location):getWestSide() == SideType.Door then expanded[target.X - 1][target.Y] = tile.DoorW end
     end
+
+    local furthestA = self:FindFurthest(dungeon, Point:new(furthest.X, furthest.Y))
+    local furthestB = self:FindFurthest(dungeon, Point:new(furthestA.X, furthestA.Y))
+
+    expanded[furthestA.X * 2 + 1][furthestA.Y * 2 + 1] = 'A'
+    expanded[furthestB.X * 2 + 1][furthestB.Y * 2 + 1] = 'B'
+
     return expanded
 end
 

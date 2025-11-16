@@ -56,17 +56,16 @@ print('Automatic\n------------------------------------------\n')
 -- So when you input 40, 40 you get a -> 39,39 map.
 local height, width = 40, 40
 
---	Function Header: Astray:new(width/2-1, height/2-1, changeDirectionModifier (1-30), sparsenessModifier (25-70), deadEndRemovalModifier (70-99) ) | RoomGenerator:new(rooms, minWidth, maxWidth, minHeight, maxHeight)
-local generator = astray.Astray:new(height / 2 - 1, width / 2 - 1, 30, 70, 50, astray.RoomGenerator:new(4, 2, 4, 2, 4))
+--	Function Header: Astray:new(width/2-1, height/2-1, changeDirectionModifier (1-30), sparsenessModifier (25-70), deadEndRemovalModifier (70-99) ) | RoomGenerator:new(rooms, minWidth, maxWidth, minHeight, maxHeight, treasureChance)
+local generator = astray.Astray:new(height / 2 - 1, width / 2 - 1, 30, 70, 50,
+    astray.RoomGenerator:new(4, 2, 4, 2, 4, 20))
 
 -- original setup
---local generator = astray.Astray:new( 25, 25, 30, 70, 50, astray.RoomGenerator:new(10,1,5,1,5) )
+--local generator = astray.Astray:new( 25, 25, 30, 70, 50, astray.RoomGenerator:new(10,1,5,1,5,20) )
 
 local dungeon = generator:Generate()
 --local tiles = generator:CellToTiles(dungeon, symbols)
 local tiles = generator:CellToTiles(dungeon)
--- to alternate between two wall-types
-updatewalls(tiles, #tiles, #tiles[1])
 -- draw on console
 drawdungeon(tiles, 0, 0, #tiles, #tiles[1])
 -- fix array index to 1 (instead of 0)
